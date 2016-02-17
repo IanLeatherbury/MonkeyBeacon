@@ -12,7 +12,6 @@ namespace MonkeyBeacon
 		BeaconManager beaconManager;
 		UtilityManager utilityManager;
 		CLBeaconRegion region;
-		CLBeacon[] beacons;
 
 		public BeaconViewController (IntPtr handle) : base (handle)
 		{
@@ -34,8 +33,6 @@ namespace MonkeyBeacon
 				beaconManager.StartMonitoringForRegion (region);
 			};
 
-			beaconManager.StartMonitoringForRegion (region);
-
 			beaconManager.ExitedRegion += (sender, e) => {
 				var notification = new UILocalNotification ();
 				notification.AlertBody = "Exit region notification";
@@ -54,10 +51,10 @@ namespace MonkeyBeacon
 		public override void ViewDidAppear (bool animated)
 		{
 			base.ViewDidLoad ();
-			StartRangingBeacons ();
+			StartMonitoringBeacons ();
 		}
 
-		private void StartRangingBeacons ()
+		private void StartMonitoringBeacons ()
 		{
 			var status = BeaconManager.AuthorizationStatus;
 			if (status == CLAuthorizationStatus.NotDetermined) {
@@ -65,7 +62,6 @@ namespace MonkeyBeacon
 					/*
              * No need to explicitly request permission in iOS < 8, will happen automatically when starting ranging.
              */
-					beaconManager.StartRangingBeaconsInRegion (region);
 					beaconManager.StartMonitoringForRegion (region);
 
 				} else {
@@ -80,9 +76,7 @@ namespace MonkeyBeacon
 					beaconManager.RequestAlwaysAuthorization ();
 				}
 			} else if (status == CLAuthorizationStatus.Authorized) {
-				beaconManager.StartRangingBeaconsInRegion (region);
 				beaconManager.StartMonitoringForRegion (region);
-
 			} else if (status == CLAuthorizationStatus.Denied) {
 				new UIAlertView ("Location Access Denied", "You have denied access to location services. Change this in app settings.", null, "OK").Show ();
 			} else if (status == CLAuthorizationStatus.Restricted) {
@@ -93,7 +87,6 @@ namespace MonkeyBeacon
 		public override void ViewDidDisappear (bool animated)
 		{
 			base.ViewDidDisappear (animated);
-			beaconManager.StopRangingBeaconsInRegion (region);
 			utilityManager.StopEstimoteBeaconDiscovery ();
 		}
 	}
