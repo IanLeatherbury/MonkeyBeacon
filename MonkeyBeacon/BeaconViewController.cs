@@ -21,29 +21,39 @@ namespace MonkeyBeacon
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
-			this.Title = "Select Beacon";
 
 			utilityManager = new UtilityManager ();
+
 			beaconManager = new BeaconManager ();
-			beaconManager.ReturnAllRangedBeaconsAtOnce = true;
-			region = new CLBeaconRegion (AppDelegate.BeaconUUID, "BeaconSample");
 
-			beaconManager.AuthorizationStatusChanged += (sender, e) => 
-						StartRangingBeacons ();
-			beaconManager.RangedBeacons += (sender, e) => {
-				beacons = e.Beacons;
+			region = new CLBeaconRegion (AppDelegate.BeaconUUID, ushort.Parse("26547"), ushort.Parse("56644"),"BeaconSample");
+			region.NotifyOnEntry = true;
+			region.NotifyOnExit = true;
 
-				if (e.Beacons.Length == 0)
-					return;
+			beaconManager.AuthorizationStatusChanged += (sender, e) => {
+				beaconManager.StartMonitoringForRegion (region);
+			};
 
-				beaconLabel.Text = TextForProximity(e.Beacons[0].Proximity);
+			beaconManager.StartMonitoringForRegion (region);
+
+			beaconManager.ExitedRegion += (sender, e) => {
+				var notification = new UILocalNotification ();
+				notification.AlertBody = "Exit region notification";
+				UIApplication.SharedApplication.PresentLocalNotificationNow (notification);
+				proximityValueLabel.Text = "You have EXITED the PooBerry region";
+			};
+
+			beaconManager.EnteredRegion += (sender, e) => {
+				var notification = new UILocalNotification ();
+				notification.AlertBody = "Enter region notification";
+				UIApplication.SharedApplication.PresentLocalNotificationNow (notification);
+				proximityValueLabel.Text = "You have ENTERED the PooBerry region";
 			};
 		}
 
 		public override void ViewDidAppear (bool animated)
 		{
 			base.ViewDidLoad ();
-
 			StartRangingBeacons ();
 		}
 
@@ -56,6 +66,7 @@ namespace MonkeyBeacon
              * No need to explicitly request permission in iOS < 8, will happen automatically when starting ranging.
              */
 					beaconManager.StartRangingBeaconsInRegion (region);
+					beaconManager.StartMonitoringForRegion (region);
 
 				} else {
 					/*
@@ -70,6 +81,7 @@ namespace MonkeyBeacon
 				}
 			} else if (status == CLAuthorizationStatus.Authorized) {
 				beaconManager.StartRangingBeaconsInRegion (region);
+				beaconManager.StartMonitoringForRegion (region);
 
 			} else if (status == CLAuthorizationStatus.Denied) {
 				new UIAlertView ("Location Access Denied", "You have denied access to location services. Change this in app settings.", null, "OK").Show ();
@@ -84,20 +96,5 @@ namespace MonkeyBeacon
 			beaconManager.StopRangingBeaconsInRegion (region);
 			utilityManager.StopEstimoteBeaconDiscovery ();
 		}
-
-		private string TextForProximity(CLProximity proximity)
-		{
-			switch (proximity) {
-			case CLProximity.Far:
-				return "Far";
-			case CLProximity.Immediate:
-				return "Immediate";
-			case CLProximity.Near:
-				return "Near";
-			default:
-				return "Unknown";
-			}
-		}
 	}
-
 }

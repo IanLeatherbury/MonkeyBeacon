@@ -16,13 +16,21 @@ namespace MonkeyBeacon
 	{
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
-		UILabel beaconLabel { get; set; }
+		UILabel proximityLabel { get; set; }
+
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
+		UILabel proximityValueLabel { get; set; }
 
 		void ReleaseDesignerOutlets ()
 		{
-			if (beaconLabel != null) {
-				beaconLabel.Dispose ();
-				beaconLabel = null;
+			if (proximityLabel != null) {
+				proximityLabel.Dispose ();
+				proximityLabel = null;
+			}
+			if (proximityValueLabel != null) {
+				proximityValueLabel.Dispose ();
+				proximityValueLabel = null;
 			}
 		}
 	}
