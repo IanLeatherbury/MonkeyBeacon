@@ -4,6 +4,7 @@ using System.CodeDom.Compiler;
 using UIKit;
 using Estimote;
 using CoreLocation;
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace MonkeyBeacon
 {
@@ -12,20 +13,31 @@ namespace MonkeyBeacon
 		BeaconManager beaconManager;
 		UtilityManager utilityManager;
 		CLBeaconRegion region;
+		MonkeyService monkeyService;
 
 		public BeaconViewController (IntPtr handle) : base (handle)
 		{
+			CurrentPlatform.Init ();
 		}
 
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
 
+			try {
+				monkeyService = new MonkeyService ();
+				monkeyService.InsertTodoItemAsync (new MonkeyItem{ Text = "New Monkey Item!" });
+			} catch (UriFormatException) {
+				var alert = new UIAlertView ("Error", "Please make sure you update the applicationURL and applicationKey to match the mobile service you have created.", null, "OK");
+				alert.Show ();
+				return;		        
+			}
+
 			utilityManager = new UtilityManager ();
 
 			beaconManager = new BeaconManager ();
 
-			region = new CLBeaconRegion (AppDelegate.BeaconUUID, ushort.Parse("26547"), ushort.Parse("56644"),"BeaconSample");
+			region = new CLBeaconRegion (AppDelegate.BeaconUUID, ushort.Parse ("26547"), ushort.Parse ("56644"), "BeaconSample");
 			region.NotifyOnEntry = true;
 			region.NotifyOnExit = true;
 
@@ -45,6 +57,7 @@ namespace MonkeyBeacon
 				notification.AlertBody = "Enter region notification";
 				UIApplication.SharedApplication.PresentLocalNotificationNow (notification);
 				proximityValueLabel.Text = "You have ENTERED the PooBerry region";
+				OnAdd ();
 			};
 		}
 
@@ -89,5 +102,18 @@ namespace MonkeyBeacon
 			base.ViewDidDisappear (animated);
 			utilityManager.StopEstimoteBeaconDiscovery ();
 		}
+
+		#region UI Actions
+
+		async void OnAdd ()
+		{
+			var newItem = new MonkeyItem {
+				Text = "First commit!"
+			};
+
+			await monkeyService.InsertTodoItemAsync (newItem);
+		}
+
+		#endregion
 	}
 }
