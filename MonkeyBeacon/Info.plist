@@ -5,9 +5,9 @@
 	<key>CFBundleName</key>
 	<string>MonkeyBeacon</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This application monitors your location to show you promotional offers in shops you're passing by.</string>
+	<string>This application monitors your location to show you promotional offers in shops you&apos;re passing by.</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.companyname.monkeybeacon</string>
+	<string>com.xamarin.monkeybeacon</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>

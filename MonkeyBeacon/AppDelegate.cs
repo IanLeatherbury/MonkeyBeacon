@@ -1,5 +1,8 @@
 ﻿using Foundation;
 using UIKit;
+using Microsoft.WindowsAzure.MobileServices;
+using Newtonsoft.Json.Linq;
+using System;
 
 namespace MonkeyBeacon
 {
@@ -13,7 +16,6 @@ namespace MonkeyBeacon
 		UIWindow window;
 		BeaconViewController viewController;
 
-
 		public static NSUuid BeaconUUID
 		{
 			//Virtual
@@ -24,35 +26,52 @@ namespace MonkeyBeacon
 			set;
 		}
 
-		public override void OnResignActivation (UIApplication application)
+		public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
 		{
-			// Invoked when the application is about to move from active to inactive state.
-			// This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) 
-			// or when the user quits the application and it begins the transition to the background state.
-			// Games should use this method to pause the game.
+			// registers for push for iOS8
+			var settings = UIUserNotificationSettings.GetSettingsForTypes(
+				UIUserNotificationType.Alert
+				| UIUserNotificationType.Badge
+				| UIUserNotificationType.Sound,
+				new NSSet());
+
+			UIApplication.SharedApplication.RegisterUserNotificationSettings(settings);
+			UIApplication.SharedApplication.RegisterForRemoteNotifications();
+
+			return true;
 		}
 
-		public override void DidEnterBackground (UIApplication application)
+		public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
 		{
-			// Use this method to release shared resources, save user data, invalidate timers and store the application state.
-			// If your application supports background exection this method is called instead of WillTerminate when the user quits.
+			MobileServiceClient client = MonkeyService.DefaultService.GetClient;
+
+			const string templateBodyAPNS = "{\"aps\":{\"alert\":\"$(messageParam)\"}}";
+
+			JObject templates = new JObject();
+			templates["genericMessage"] = new JObject
+			{
+				{"body", templateBodyAPNS}
+			};
+
+			// Register for push with your mobile app
+			var push = client.GetPush();
+			push.RegisterAsync(deviceToken, templates);
 		}
 
-		public override void WillEnterForeground (UIApplication application)
+		public override void DidReceiveRemoteNotification (UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
 		{
-			// Called as part of the transiton from background to active state.
-			// Here you can undo many of the changes made on entering the background.
-		}
+			NSDictionary aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
 
-		public override void OnActivated (UIApplication application)
-		{
-			// Restart any tasks that were paused (or not yet started) while the application was inactive. 
-			// If the application was previously in the background, optionally refresh the user interface.
-		}
+			string alert = string.Empty;
+			if (aps.ContainsKey(new NSString("alert")))
+				alert = (aps [new NSString("alert")] as NSString).ToString();
 
-		public override void WillTerminate (UIApplication application)
-		{
-			// Called when the application is about to terminate. Save data, if needed. See also DidEnterBackground.
+			//show alert
+			if (!string.IsNullOrEmpty(alert))
+			{
+				UIAlertView avAlert = new UIAlertView("Notification", alert, null, "OK", null);
+				avAlert.Show();
+			}
 		}
 	}
 }

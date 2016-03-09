@@ -25,6 +25,8 @@ namespace iOSsample
 			// Create an MSTable instance to allow us to work with the TodoItem table
 			todoTable = client.GetTable <ToDoItem> ();
 		}
+
+
      
 		public List<ToDoItem> Items { get; private set;}
 

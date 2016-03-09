@@ -3,25 +3,43 @@ using System.Net.Http;
 using Microsoft.WindowsAzure.MobileServices;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.WindowsAzure.MobileServices;
+using Newtonsoft.Json.Linq;
 
 namespace MonkeyBeacon
 {
 	public class MonkeyService : DelegatingHandler
 	{
 		MobileServiceClient client;
-		IMobileServiceTable<MonkeyItem> monkeyTable;
+		static MonkeyService instance = new MonkeyService ();
 
-		public List<MonkeyItem> Items { get; private set; }
+		IMobileServiceTable<MonkeyItem> monkeyTable;
 
 		int busyCount = 0;
 
 		public event Action<bool> BusyUpdate;
 
+		public static MonkeyService DefaultService {
+			get {
+				return instance;
+			}
+		}
+
+		public MobileServiceClient GetClient {
+			get
+			{
+				return client;
+			}
+			private set
+			{
+				client = value;
+			}
+		}
+
 		public MonkeyService ()
 		{
 			CurrentPlatform.Init ();
 
-			// Initialize the Mobile Service client with your URL
 			client = new MobileServiceClient (Constants.applicationUrl, this);
 
 			// Create an MSTable instance to allow us to work with the TodoItem table
@@ -34,7 +52,6 @@ namespace MonkeyBeacon
 				// This code inserts a new MonkeyItem into the database. When the operation completes
 				// and Mobile Services has assigned an Id, the item is added to the CollectionView
 				await monkeyTable.InsertAsync (monkeyItem);
-				Items.Add (monkeyItem); 
 
 			} catch (MobileServiceInvalidOperationException e) {
 				Console.Error.WriteLine (@"ERROR {0}", e.Response);
