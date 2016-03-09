@@ -107,12 +107,13 @@ namespace MonkeyBeacon
 				client = new LocalHueClient (bridgeIp [0].HueBridgeIpAddress);
 				client.Initialize (appKey [0].AppId);
 			} catch {
-				Console.WriteLine ("Connect to bridge first");
+				var alert = new UIAlertView ("Hangon!", "First, press the button on the Hue bridge. Then tap 'Connect' in the app.", null, "OK");		
+				alert.Show ();		
+				Console.WriteLine ("First, connect to bridge");
 			}
 		}
 
 		#region HueControls
-
 		void OffButton_TouchUpInside (object sender, EventArgs e)
 		{
 			var command = new LightCommand ();
@@ -124,9 +125,11 @@ namespace MonkeyBeacon
 		{
 			if (client != null) {
 				var command = new LightCommand ();
-				command.TurnOn ().SetColor ("FF00AA");
+				command.On = true;
 				await client.SendCommandAsync (command);
 			} else {
+				var alert = new UIAlertView ("Hangon!", "First, press the button on the Hue bridge. Then tap 'Connect' in the app.", null, "OK");		
+				alert.Show ();		
 				Console.WriteLine ("Connect to bridge first");
 			}
 		}
@@ -156,6 +159,9 @@ namespace MonkeyBeacon
 			var db = new SQLite.SQLiteConnection (_pathToDatabase);
 			db.Insert (bridgeIp);
 			db.Insert (appKey);
+
+			var alert = new UIAlertView ("Success!", "Feel free to play with your lights!", null, "OK");		
+			alert.Show ();	
 		}
 
 		#endregion HueControls
@@ -208,6 +214,19 @@ namespace MonkeyBeacon
 				var alert = new UIAlertView ("Error", "Please make sure you update the applicationURL and applicationKey to match the mobile service you have created.", null, "OK");
 				alert.Show ();
 				return;		        
+			}
+		}
+
+		async partial void ColorButton_TouchUpInside (UIButton sender)
+		{
+			if (client != null) {
+				var command = new LightCommand ();
+				command.TurnOn ().SetColor ("8e44ad");
+				await client.SendCommandAsync (command);
+			} else {
+				var alert = new UIAlertView ("Hangon!", "First, press the button on the Hue bridge. Then tap 'Connect' in the app.", null, "OK");		
+				alert.Show ();		
+				Console.WriteLine ("Connect to bridge first");
 			}
 		}
 	}

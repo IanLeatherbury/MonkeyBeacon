@@ -16,6 +16,10 @@ namespace MonkeyBeacon
 	{
 		[Outlet]
 		[GeneratedCode ("iOS Designer", "1.0")]
+		UIButton colorButton { get; set; }
+
+		[Outlet]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		UIButton connectBridge { get; set; }
 
 		[Outlet]
@@ -38,8 +42,16 @@ namespace MonkeyBeacon
 		[GeneratedCode ("iOS Designer", "1.0")]
 		UIButton rangePageButton { get; set; }
 
+		[Action ("UIButton984_TouchUpInside:")]
+		[GeneratedCode ("iOS Designer", "1.0")]
+		partial void ColorButton_TouchUpInside (UIButton sender);
+
 		void ReleaseDesignerOutlets ()
 		{
+			if (colorButton != null) {
+				colorButton.Dispose ();
+				colorButton = null;
+			}
 			if (connectBridge != null) {
 				connectBridge.Dispose ();
 				connectBridge = null;

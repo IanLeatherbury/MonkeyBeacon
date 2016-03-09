@@ -46,11 +46,11 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <constraints>
-                                    <constraint id="563" firstAttribute="width" constant="211"/>
+                                    <constraint id="987" firstAttribute="width" constant="211"/>
                                 </constraints>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="467" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="185" y="384" width="46" height="30"/>
+                                <rect key="frame" x="20" y="384" width="374" height="30"/>
                                 <state key="normal" title="Off">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -70,6 +70,15 @@
                                     <segue id="878" destination="800" kind="show"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="984" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="20" y="477" width="375" height="30"/>
+                                <state key="normal" title="Set Color">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="UIButton984_TouchUpInside:" destination="BYZ-38-t0r" id="988" eventType="touchUpInside"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint id="440" firstItem="66" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="92"/>
@@ -80,8 +89,8 @@
                             <constraint id="445" firstItem="8bC-Xf-vdC" firstAttribute="trailing" secondItem="21" secondAttribute="trailing" constant="20"/>
                             <constraint id="446" firstItem="21" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20"/>
                             <constraint id="447" firstItem="wfy-db-euE" firstAttribute="top" secondItem="21" secondAttribute="bottom" constant="547"/>
-                            <constraint id="564" firstItem="8bC-Xf-vdC" firstAttribute="trailing" secondItem="452" secondAttribute="trailing" constant="101"/>
-                            <constraint id="565" firstItem="452" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="224"/>
+                            <constraint id="985" firstItem="8bC-Xf-vdC" firstAttribute="trailing" secondItem="452" secondAttribute="trailing" constant="101"/>
+                            <constraint id="986" firstItem="452" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="224"/>
                         </constraints>
                     </view>
                     <connections>
@@ -91,6 +100,7 @@
                         <outlet property="offButton" destination="467" id="name-outlet-467"/>
                         <outlet property="onButton" destination="526" id="name-outlet-526"/>
                         <outlet property="rangePageButton" destination="543" id="name-outlet-543"/>
+                        <outlet property="colorButton" destination="984" id="name-outlet-984"/>
                     </connections>
                     <navigationItem title="HueBeacons" id="657" key="navigationItem"/>
                 </viewController>
